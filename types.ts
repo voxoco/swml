@@ -474,38 +474,36 @@ type SipReferMethod = {
   to_uri: string;
 };
 
-type serialParallel = {
-  /**
-   * Array of arrays. Inner arrays contain destinations to dial simultaneously. Outer array attempts each parallel group in order.
-   */
-  serial_parallel: string[][];
-};
-
-type serial = {
-  /**
-   * Array of destinations to dial in order.
-   */
-  serial: string[];
-};
-
-type parallel = {
+type ConnectMethodParallel = {
   /**
    * Array of destinations to dial simultaneously.
    */
-  parallel: string[];
-};
+  parallel?: ConnectMethodBase[];
+}
 
-type to = {
+interface ConnectMethodSerialParallel {
   /**
-   * Single destination to dial.
+   * Array of arrays. Inner arrays contain destinations to dial simultaneously. Outer array attempts each parallel group in order.
    */
-  to: string;
-};
+  serial_parallel: ConnectMethodBase[][];
+}
+
+interface ConnectMethodSerial {
+  /**
+   * Array of destinations to dial in order.
+   */
+  serial: ConnectMethodBase[];
+}
 
 /**
  * Dial a SIP URI or phone number.
  */
 interface ConnectMethodBase {
+  /**
+   * Single destination to dial.
+   */
+  to: string;
+
   /**
    * Caller ID number. Optional. Default is calling party caller ID number.
    */
@@ -539,14 +537,9 @@ interface ConnectMethodBase {
   ringback?: string[];
 }
 
-type ConnectMethodTo = ConnectMethodBase & to;
-type ConnectMethodSerial = ConnectMethodBase & serial;
-type ConnectMethodParallel = ConnectMethodBase & parallel;
-type ConnectMethodSerialParallel = ConnectMethodBase & serialParallel;
-
 // ConnectMethod should have one and only one of the following dialing parameters set.
-type ConnectMethod =
-  | ConnectMethodTo
+type ConnectMethod = 
+  | ConnectMethodBase
   | ConnectMethodSerial
   | ConnectMethodParallel
   | ConnectMethodSerialParallel;
